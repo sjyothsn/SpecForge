@@ -1,0 +1,77 @@
+{
+  "name": "specinsight-vscode",
+  "displayName": "SpecInsight",
+  "description": "Run SpecInsight AI from a dedicated VS Code side panel.",
+  "version": "0.0.1",
+  "publisher": "hackathon-local",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:specinsight.panel",
+    "onCommand:specinsight.run",
+    "onCommand:specinsight.openLatestReport"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "specinsight",
+          "title": "SpecInsight",
+          "icon": "media/specinsight.svg"
+        }
+      ]
+    },
+    "views": {
+      "specinsight": [
+        {
+          "id": "specinsight.panel",
+          "name": "Run SpecInsight"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "specinsight.run",
+        "title": "SpecInsight: Run"
+      },
+      {
+        "command": "specinsight.openLatestReport",
+        "title": "SpecInsight: Open Latest Report"
+      }
+    ],
+    "configuration": {
+      "title": "SpecInsight",
+      "properties": {
+        "specinsight.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Python executable path used to run the SpecInsight CLI."
+        },
+        "specinsight.pyPathMode": {
+          "type": "string",
+          "default": "env",
+          "enum": [
+            "env",
+            "module"
+          ],
+          "description": "Set PYTHONPATH=src using env mode, or pass -m with module mode if your environment is already configured."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "node ./node_modules/typescript/bin/tsc -p ./",
+    "watch": "node ./node_modules/typescript/bin/tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,154 @@
+SYSTEM-ON-CHIP (SoC) INTEGRATION SPECIFICATION
+
+REVISION: 1.0
+DATE: 2026-07-10
+
+EXECUTIVE SUMMARY
+
+This document describes a heterogeneous multi-core SoC integrating CPU, GPU, and specialized accelerators on a single die.
+The design emphasizes cache coherency, power efficiency, and high-bandwidth interconnects.
+
+CHAPTER 1: SYSTEM OVERVIEW
+
+1.1 Architecture Layers
+- Application Layer (running OS)
+- Hardware Abstraction Layer (device drivers)
+- Core Microarchitecture Layer (caches, pipelines)
+- Physical Implementation Layer (power grids, clocks)
+
+1.2 Key Blocks
+Component: CPU Cluster (quad-core)
+Component: GPU Tile (1024 ALUs)
+Component: Neural Engine (AI accelerator)
+Component: Coherent Interconnect (mesh topology)
+Component: Shared L3 Cache (16 MB)
+Component: Memory Controller Hub
+Component: System Agent
+
+1.3 I/O Subsystems
+Interface: DDR5 Memory Interface
+Interface: PCIe Gen5 Controller
+Interface: Ethernet MAC (10 GbE)
+Interface: USB 3.1 Host Controller
+
+CHAPTER 2: PROCESSOR CORES
+
+2.1 CPU Cluster Details
+Signal: core_clk - Per-core clock
+Signal: core_rst_n - Per-core reset
+Signal: intr_in - Interrupt input
+Signal: timer_irq - Timer interrupt
+
+2.2 GPU Tile Composition
+Component: Execution Pipeline
+Component: Register File
+Component: Local Cache (256 KB)
+GPU Tile communicates with Coherent Interconnect.
+GPU Tile depends on Shared L3 Cache.
+
+2.3 Neural Engine Specialization
+Component: Tensor Compute Unit
+Component: Weight Buffer
+Component: Activation Buffer
+Neural Engine reads from Shared L3 Cache.
+Neural Engine writes results to Memory Controller Hub.
+
+CHAPTER 3: MEMORY HIERARCHY
+
+3.1 Cache Organization
+Register: L1I_CTL - L1 Instruction Cache control
+Register: L1D_CTL - L1 Data Cache control
+Register: L2_CONFIG - L2 cache configuration
+Register: L3_STATUS - L3 status register
+
+3.2 Cache Coherency Protocol
+State Machine: CoherencyMgr
+The CoherencyMgr enforces MOESI protocol.
+CPU Cluster participates in coherency.
+GPU Tile participates in coherency.
+Invalidation requests flow through Coherent Interconnect.
+
+3.3 Memory Subsystem Flow
+CPU Cluster writes to L1 Data Cache.
+L1 Data Cache may allocate in L2 Cache.
+Cache misses traverse Coherent Interconnect to Shared L3 Cache.
+If L3 miss occurs, Memory Controller Hub handles DRAM fetch from DDR5 Memory Interface.
+
+CHAPTER 4: INTERCONNECT ARCHITECTURE
+
+4.1 Topology
+The Coherent Interconnect uses a 2x2 mesh topology.
+CPU Cluster occupies corner 0.
+GPU Tile occupies corner 1.
+Neural Engine occupies corner 2.
+Memory Controller Hub occupies corner 3.
+
+4.2 Routing
+Signal: req_type - Request type (read/write/invalidate)
+Signal: addr_target - Target address
+Signal: data_payload - Data being transferred
+Components use address-based routing.
+All transactions include coherency metadata.
+
+4.3 Flow Control
+The interconnect supports 8 virtual channels.
+Priority-based arbitration favors coherency transactions.
+
+CHAPTER 5: I/O SUBSYSTEMS
+
+5.1 DDR5 Memory Controller
+Component: Address Decoder
+Component: Command Queue
+Component: Read Data Buffer
+Component: Write Data Buffer
+Address Decoder processes addresses from Memory Controller Hub.
+Command Queue maintains up to 32 in-flight requests.
+
+5.2 PCIe Gen5 Controller
+Interface: PCIe Gen5 x8 physical link
+Component: Link State Manager
+Component: Transaction Layer Processor
+Component: Data Link Layer
+Link State Manager depends on System Agent.
+
+5.3 Ethernet Interface
+Component: MAC Core
+Component: PHY Interface
+Component: DMA Engine
+DMA Engine can autonomously fetch/store packets without CPU involvement.
+
+CHAPTER 6: POWER AND THERMAL MANAGEMENT
+
+6.1 Power Islands
+Component: Power Domain Manager
+Component: Voltage Regulator (multi-rail)
+CPU Cluster can transition to power-gated state.
+GPU Tile can scale voltage/frequency independently.
+Neural Engine can be clock-gated during idle periods.
+
+6.2 Thermal Monitoring
+Register: THERMAL_STATUS
+Signal: core_temp - Core temperature
+Signal: throttle_req - Throttle request
+Power Domain Manager reads THERMAL_STATUS.
+Power Domain Manager can throttle Coherent Interconnect bandwidth.
+
+CHAPTER 7: FUNCTIONAL REQUIREMENTS
+
+REQ-701: System shall boot within 500 ms from cold start.
+REQ-702: All cores must maintain cache coherency.
+REQ-703: Memory latency from L1 cache miss to DRAM read shall not exceed 200 ns.
+REQ-704: Interconnect shall support 256 GB/s aggregate bandwidth.
+REQ-705: PCIe Gen5 shall achieve 128 GB/s bidirectional throughput.
+REQ-706: Neural Engine shall deliver 16 TFLOPS (FP32).
+REQ-707: Power consumption in idle state shall not exceed 5 W.
+REQ-708: All protection domains must be enforced by System Agent.
+
+CHAPTER 8: DEBUGGING AND VALIDATION
+
+Component: Debug Controller
+Component: Trace Buffer
+Debug Controller connects via JTAG Interface.
+Debug Controller can halt any core or subsystem.
+Trace Buffer captures all Coherent Interconnect transactions.
+System Agent enforces security policies during debug.

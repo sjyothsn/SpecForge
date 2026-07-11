@@ -1,0 +1,50 @@
+INTEL MEMORY CONTROLLER SPECIFICATION v2.1
+
+1. OVERVIEW
+The Memory Controller (MC) is a critical component that bridges the CPU and main memory subsystem.
+It manages all read/write requests and handles cache coherency protocols.
+
+1.1 Key Components
+Component: Address Translator
+Component: Request Scheduler
+Component: Arbiter
+Component: Data Buffer
+
+2. INTERFACES
+Interface: CPU-MC Bus (AXI protocol)
+Interface: DRAM Interface (DDR4)
+Interface: Coherency Protocol (MESI)
+
+3. REGISTER MAP
+Register: MC_CTRL_REG - Master control register
+Register: MC_STAT_REG - Status and error flags
+Register: MC_ADDR_BASE - Base address for translations
+Register: MC_TIMING_CFG - Timing configuration for DRAM
+
+4. SIGNALS
+Signal: clk - System clock
+Signal: rst_n - Active-low reset
+Signal: req_valid - Request valid indicator
+Signal: req_ready - Request accepted
+Signal: data_out - Output data bus
+Signal: error_flag - Error detection signal
+
+5. DATA FLOW
+Address Translator receives requests from CPU-MC Bus.
+Address Translator sends translated addresses to Request Scheduler.
+Request Scheduler communicates with Arbiter for priority handling.
+Arbiter schedules reads and writes to DRAM Interface.
+Data Buffer stores incoming and outgoing data.
+Data Buffer sends results back via CPU-MC Bus.
+
+6. CONTROL FLOW
+State Machine: RequestHandler_FSM
+States: IDLE, RECEIVE, TRANSLATE, SCHEDULE, EXECUTE, COMPLETE
+RequestHandler_FSM depends on Arbiter.
+Arbiter coordinates with Data Buffer.
+
+7. REQUIREMENTS
+REQ-201 All requests must be processed within 32 clock cycles.
+REQ-202 Cache coherency must be maintained across all MC instances.
+REQ-203 The MC shall support burst transfers up to 256 bytes.
+REQ-204 Error detection and reporting shall occur within 4 clock cycles.

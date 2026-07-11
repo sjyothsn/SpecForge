@@ -1,0 +1,105 @@
+GRAPHICS PROCESSING UNIT SPECIFICATION (Evaluation Sample)
+
+ABSTRACT
+The GPU is a highly parallel processor designed for graphics and compute workloads.
+It features a unified memory hierarchy and supports multiple execution models.
+
+SECTION 1: SYSTEM ARCHITECTURE
+
+1.1 Core Components
+Component: Shader Core Array
+Component: Texture Cache Hierarchy
+Component: Memory Controller (MC)
+Component: Command Processor
+Component: SRAM Block
+Component: Frame Buffer Interface
+
+1.2 External Interfaces
+Interface: PCIe Interface (Gen3 x16)
+Interface: HDMI Display Output
+Interface: System Memory Interface (GDDR6X)
+Interface: Debug JTAG Interface
+
+1.3 Internal Connectivity
+Shader Core Array communicates with Texture Cache Hierarchy.
+Texture Cache Hierarchy depends on Memory Controller.
+Memory Controller uses System Memory Interface.
+Command Processor sends commands to Shader Core Array.
+Frame Buffer Interface receives output from Shader Core Array.
+Frame Buffer Interface sends frames to HDMI Display Output.
+
+SECTION 2: REGISTER DEFINITIONS
+
+2.1 Control Registers
+Register: GPU_ENABLE_REG
+Register: GPU_CLOCK_CTRL
+Register: GPU_POWER_LEVEL
+Register: GPU_CMD_QUEUE_PTR
+Register: GPU_INTR_STATUS
+
+2.2 Status Registers
+Register: GPU_SHADER_LOAD
+Register: GPU_TEMP_SENSOR
+Register: GPU_ERROR_COUNT
+Register: GPU_MEMORY_USED
+
+SECTION 3: SIGNAL DEFINITIONS
+
+3.1 Clock and Reset
+Signal: gpu_clk - Primary GPU clock
+Signal: gpu_rst_n - Active-low reset
+
+3.2 Command Interface
+Signal: cmd_valid - Command valid indicator
+Signal: cmd_opcode - Command operation code
+Signal: cmd_data - Command data payload
+
+3.3 Status Signals
+Signal: gpu_busy - GPU is processing
+Signal: gpu_ready - Ready for new command
+Signal: error_detected - Error condition active
+
+SECTION 4: EXECUTION MODEL
+
+4.1 State Machines
+State Machine: CommandExecutor
+State Machine: ShaderScheduler
+State Machine: MemoryArbiter
+
+4.2 Operational Flow
+Command Processor receives commands via cmd_valid.
+Command Processor routes to appropriate execution unit.
+CommandExecutor state machine manages execution sequence.
+Shader Core Array performs actual computation.
+ShaderScheduler manages shader invocation order.
+Texture Cache Hierarchy provides data locality.
+MemoryArbiter schedules all memory transactions.
+Results flow to Frame Buffer Interface or System Memory.
+
+4.3 Dependencies
+CommandExecutor depends on ShaderScheduler.
+ShaderScheduler depends on MemoryArbiter.
+MemoryArbiter depends on Memory Controller.
+
+SECTION 5: PERFORMANCE CONSTRAINTS
+
+REQ-501: The GPU shall execute up to 1024 concurrent shaders per core.
+REQ-502: Texture cache hit rate shall exceed 92% for typical workloads.
+REQ-503: Memory bandwidth shall support minimum 256 GB/s.
+REQ-504: Frame rendering latency must not exceed 16.67 ms at 60 Hz.
+REQ-505: Thermal shutdown must activate at 100°C (junction temperature).
+
+SECTION 6: POWER MANAGEMENT
+
+Component: Dynamic Voltage Frequency Scaling (DVFS)
+Component: Thermal Monitor
+DVFS adjusts gpu_clk based on workload.
+Thermal Monitor reads GPU_TEMP_SENSOR.
+Thermal Monitor can throttle Command Processor or transition to low-power state.
+
+SECTION 7: INTERCONNECT PROTOCOL
+
+The GPU uses an internal coherent interconnect for shader cores.
+All cores can access unified SRAM Block.
+Memory requests from Shader Core Array go through Memory Controller.
+The interconnect supports broadcast for synchronization.

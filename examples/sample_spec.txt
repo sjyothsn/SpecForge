@@ -1,0 +1,21 @@
+1 System Overview
+Component: PacketRouter
+Component: DMAEngine
+Interface: AXI
+Interface: PCIe
+
+2 Functional Requirements
+REQ-101 The PacketRouter shall route incoming packets to DMAEngine.
+REQ-102 DMAEngine must write payload buffers to HOST_MEM_REG.
+Register: HOST_MEM_REG
+Signal: pkt_valid_in
+Signal: dma_done_out
+
+3 Data Path
+PacketRouter sends data to DMAEngine.
+DMAEngine writes to HOST_MEM_REG.
+PacketRouter communicates with AXI and PCIe.
+
+4 Control Logic
+State Machine: PacketFSM
+PacketRouter depends on PacketFSM.

@@ -1,0 +1,57 @@
+PCIe ROOT COMPLEX ARCHITECTURE SPECIFICATION
+
+1 INTRODUCTION
+PCIe Root Complex acts as the bridge between host CPU and PCIe devices.
+It provides transaction routing, power management, and interrupt handling.
+
+1.1 Key Subsystems
+Component: Transaction Router
+Component: Power Manager
+Component: Interrupt Controller
+Component: Link Manager
+
+2 PHYSICAL INTERFACE
+Interface: PCIe Gen4 x16 Lane Interface
+Interface: CPU Interface (proprietary)
+Interface: Management Interface (I2C)
+
+3 MEMORY MAPPED REGISTERS
+Register: RC_CONFIG_SPACE - Configuration space access
+Register: RC_LINK_CTRL - Link state control
+Register: RC_POWER_MGMT - Power state register
+Register: RC_INTR_MASK - Interrupt mask control
+Register: RC_ERROR_LOG - Error logging buffer
+
+4 DATA SIGNALS
+Signal: txn_req_valid - Transaction request valid
+Signal: txn_data - Transaction payload
+Signal: rxn_ready - Ready to accept
+Signal: link_up - Physical link status
+Signal: power_state - Current power state
+
+5 TRANSACTION FLOW
+CPU Interface sends transaction requests to Transaction Router.
+Transaction Router uses Link Manager to verify link status.
+Link Manager communicates link_up signal.
+Transaction Router passes verified transactions to PCIe Gen4 x16 Lane Interface.
+PCIe Gen4 x16 Lane Interface serializes and transmits data.
+Power Manager monitors power_state and may throttle transactions.
+Interrupt Controller handles inbound interrupts from PCIe devices.
+Interrupt Controller sends interrupts back to CPU Interface.
+
+6 CONTROL STATE MACHINES
+State Machine: LinkHandler_FSM
+State Machine: PowerController_FSM
+LinkHandler_FSM depends on Link Manager.
+PowerController_FSM depends on Power Manager.
+
+7 PERFORMANCE REQUIREMENTS
+REQ-301 Transaction latency shall not exceed 500 nanoseconds.
+REQ-302 Link training shall complete within 100 microseconds.
+REQ-303 Throughput must support minimum 8 GB/s per lane.
+REQ-304 Power state transitions must occur within 10 microseconds.
+
+8 FAULT TOLERANCE
+Component: Error Detection Logic
+Error Detection Logic reads from RC_ERROR_LOG.
+Error Detection Logic sends alerts to Interrupt Controller.
