@@ -35,20 +35,40 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 2. Run Full Demo (All Dev + Eval Sets)
+### 2. Launch VS Code Plugin (Recommended)
+
+The plugin is pre-compiled and ready to use:
+
+1. Open the `vscode-plugin` folder in VS Code:
+   ```powershell
+   code vscode-plugin
+   ```
+   Or use VS Code File > Open Folder and select `vscode-plugin`
+
+2. Press **F5** (or Debug > Start Debugging)
+   - This launches an "Extension Development Host" window
+   - The plugin auto-compiles if needed
+
+3. In the new Extension Development Host window, open your SpecForge project folder
+
+4. Click the **SpecInsight icon** in the Activity Bar (left sidebar)
+   - You'll see a panel with "Run SpecInsight" and "Open Latest Report"
+   - Enter input/output paths and click Run
+
+### 3. Run Full Demo (All Dev + Eval Sets)
 ```powershell
 $env:PYTHONPATH = "src"
 .\run_demo.ps1
 ```
 
-### 3. Process Individual Files or Folders
+### 4. Process Individual Files or Folders
 ```bash
 $env:PYTHONPATH = "src"
 python -m specinsight.cli --input "examples\sample_spec.txt" --output "outputs"
 python -m specinsight.cli --input "examples\dev_set" --output "outputs\dev"
 ```
 
-### 4. Evaluate Quality
+### 5. Evaluate Quality
 ```bash
 $env:PYTHONPATH = "src"
 python -m specinsight.evaluator --output "outputs\dev" --docs "memory_controller_spec" "pcie_root_complex_spec"
