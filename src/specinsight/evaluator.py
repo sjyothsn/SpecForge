@@ -124,7 +124,7 @@ class SpecEvaluator:
         """Count markdown section headings."""
         if not path.exists():
             return 0
-        content = path.read_text()
+        content = path.read_text(encoding="utf-8", errors="ignore")
         return content.count("##")
 
     @staticmethod
